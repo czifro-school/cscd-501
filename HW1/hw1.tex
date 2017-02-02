@@ -1,0 +1,145 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphics,epsfig,color}
+\usepackage{wrapfig}
+
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{amsmath,amsthm,amssymb}
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{qtree}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{listings}
+
+
+%for code from latexdraw
+%\usepackage[usenames,dvipsnames]{pstricks}
+%\usepackage{epsfig}
+%\usepackage{pst-grad} % For gradients
+%\usepackage{pst-plot} % For axes
+
+
+\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}{Proposition}[theorem]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{claim}{Claim}[section]
+\newtheorem{problem}{Problem}
+%\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{observation}{Observation}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{openproblem}{Open Problem}[section]
+\newtheorem{fact}{Fact}[section]
+%\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+
+\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+\newenvironment{proofsketch}{\begin{trivlist}
+\item[\hspace{\labelsep}{\noindent Proof Sketch: }]
+}{\qedsymb\end{trivlist}}
+
+
+
+%the following few lines until usepackage{algorithm2e} is to avoid the
+%conflicts of algorithm2e with other packages.
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+
+
+%\newenvironment{proof}{\begin{trivlist}
+%\item[\hspace{\labelsep}{\bf\noindent Proof: }]}{\qedsymb\end{trivlist}}
+%\newcommand{\qed}{\hfill\rule{2mm}{2mm}}
+
+\newcommand{\remove}[1]{}
+
+
+
+%--------------------------------
+
+
+\begin{document}
+
+\begin{center}
+  {\LARGE CSCD501 Homework1}
+
+\bigskip 
+
+{\Large Will Czifro}
+
+\end{center}
+
+\bigskip 
+
+\begin{problem}[25 points]
+\label{prob:1}
+ Describe an algorithm that, given n integers in the range 0 to k, preprocesses its input and
+then answers any query about how many of the n integers fall into a range [a...b] in $O(1)$ time. Your algorithm should use $\Theta(n + k)$ preprocessing time.
+\end{problem}
+
+The CountSort algorithm uses an intermediary step before sorting a sequence of numbers. This step creates a placeholder array called $C$ of size $k$. As the input array, $A$, is iterated over, the following operation is performed: $C[A[i]] = C[A[i]] + 1$. This uses the value at $A[i]$ to index $C$ and increment that position in $C$ by one. Finally, each element in $C$ is updated by adding the value of its neighbor to itself like such:
+
+\begin{lstlisting}
+for i in 1..n do
+   C[i] = C[i] + C[i-1]
+\end{lstlisting}
+
+The query in question can be answered with the following: $C[b] - C[a-1]$. Note that in the instance that $a-1 < 0$, it should be $C[b] - 0$.
+
+%---------------------------------------
+
+\begin{problem}[25 points]
+\label{prob:2}
+  Can you give a simple scheme that change any given sorting algorithm to be stable ? How
+much additional time and space does your scheme entail ?
+\end{problem}
+
+An algorithm is considered stable if duplicate values are kept in the same order as the in the output array as the in put array. For any algorithm that is not already stable, stability can be achieved through the use of an extra unique key that can be sorted on, namely the index position of the element in the input array. For instance, if a Quicksort operation was going to lead to being unstable, doing a Mergesort on the index keys of duplicate values would keep the output stable in the worst-case where all values are duplicates, this would be $O(nlogn)$. However, for when there are $k$ sets of duplicates, the complexity would be $\Theta(knlogn)$ which is simply $\Theta(nlogn)$. The space complexity would need an additional $O(n)$ to achieve this.
+
+%---------------------------------------
+
+\begin{problem}[25 points]
+\label{prob:3}
+Explain why the worst-case running time for bucket sort is $\Theta(n^2)$. What simple change to the
+algorithm preserves its linear average-case running time and makes its worst-case running time $O(n log n)$ ?
+\end{problem}
+
+Bucket sort requires the use of another sorting algorithm to sort the buckets that the sequence gets placed into. If the data is not uniformly distributed and all the values end up in one bucket, the worst-case running time is then based on the algorithm used to sort each bucket. If Insertion sort was the algorithm used, then Bucket sort would have a worst-case running time of $\Theta(n^2)$. Switching Insertion sort out for Merge sort would guarantee that Bucket sort's worst-case running time be $\Theta(nlogn)$.
+
+%---------------------------------------
+
+
+\begin{problem}[25 points]
+\label{prob:4}
+Professor Olay is consulting for an oil company, which is planning a large pipeline running
+east to west through an oil field of $n$ wells. The company wants to connect a spur pipeline from each well directly to the main pipeline along a shortest route (either north or south), as shown in the Figure below. Given the $x-$ and $y-coordinates$ of the wells, how should the professor pick the optimal location of the main pipeline, which would be the one that minimizes the total length of the spurs? Show how to determine the optimal location in linear time.
+\end{problem}
+
+
+Using the median of all $y-coordinates$ would be the best option for providing the location the pipeline should be placed. The reason for median is chosen over mean is because outliers in $y-coordinates$ would cause the placement of the pipeline to be in favor of the outliers rather than the mass. Median favors the mass instead, and since outliers are so few, it will yield a placement that would provide the least total length of the spurs. In addition, to ensure the least total length, there needs to be an equal number of wells north of the pipeline as there are south of the pipeline, which is $\lfloor\frac{n}{2}\rfloor$. For when $n$ is even, there will be a lower median and upper median. To maintain the said criterion, if the lower median is chosen, it should be considered south of the pipeline. If the upper median is chosen, it should be considered north of the pipeline. This is for when choosing a value between the two is not an option. 
+
+Finding this median, though, can be done using $RandomizedSelect$. $RandomizedSelect$ can return the value at the $ith$ position in linear time, provided that the constant $c$ in the following equation is sufficiently large:
+
+$$
+T(n) \leq c*n + (\frac{1}{4}*c + \Theta(n))
+$$
+
+There is the possibility that this method can run for $\Theta(n^2)$. To always ensure linear time, even in worst case, $DeterministicSelect$ can achieve this, provided that the constant $c$ in the following equation is sufficiently large:
+
+$$
+T(n) \leq c*n + (\frac{1}{20}*c + \Theta(n))
+$$
+
+In comparison to $RandomizedSelect$, it is doing $\frac{n}{5}$ times more work. This makes sense since $DeterministicSelect$ is finding the median in five groups and then finding the median of medians. For practicality, $RandomizedSelect$ should be used over $DeterministicSelect$ since it can achieve linear time with less expense.
+
+
+\end{document}
+
+
+
+

@@ -1,0 +1,321 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphics,epsfig,color}
+\usepackage{wrapfig}
+
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{amsmath,amsthm,amssymb}
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{qtree}
+\usepackage{subfigure}
+\usepackage{url}
+
+
+%for code from latexdraw
+%\usepackage[usenames,dvipsnames]{pstricks}
+%\usepackage{epsfig}
+%\usepackage{pst-grad} % For gradients
+%\usepackage{pst-plot} % For axes
+
+
+\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}{Proposition}[theorem]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{claim}{Claim}[section]
+\newtheorem{problem}{Problem}
+%\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{observation}{Observation}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{openproblem}{Open Problem}[section]
+\newtheorem{fact}{Fact}[section]
+%\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+
+\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+\newenvironment{proofsketch}{\begin{trivlist}
+\item[\hspace{\labelsep}{\noindent Proof Sketch: }]
+}{\qedsymb\end{trivlist}}
+
+
+
+%the following few lines until usepackage{algorithm2e} is to avoid the
+%conflicts of algorithm2e with other packages.
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[ruled,vlined]{algorithm2e}
+
+
+%\newenvironment{proof}{\begin{trivlist}
+%\item[\hspace{\labelsep}{\bf\noindent Proof: }]}{\qedsymb\end{trivlist}}
+%\newcommand{\qed}{\hfill\rule{2mm}{2mm}}
+
+\newcommand{\remove}[1]{}
+
+
+
+%--------------------------------
+
+
+\begin{document}
+
+\begin{center}
+  {\LARGE CSCD501 Homework2}
+
+\bigskip 
+
+{\Large Will Czifro}
+
+\end{center}
+
+\bigskip 
+
+\begin{problem}[100 points]
+\label{prob:1}
+Given an arbitrary permutation of the set {1, 2,...,n} stored in an array of size n, replace
+it with the next permutation in lexicographical order. For example, when n = 3, here is a sequence of all the permutations
+listed in lexicographical order: (1, 2, 3),(1, 3, 2),(2, 1, 3),(2, 3, 1),(3, 1, 2),(3, 2, 1). As a special case, if
+the current permutation is (n, n − 1,..., 1), then the next permutation should be (1, 2,...,n), such that the sequence
+of permutations is cyclical. Assume your permutation generation algorithm will be executed n! consecutive times, so
+that the final permutation will be the same as the original permutation.
+
+\begin{enumerate}
+  \item (10 points) Write an efficient deterministic algorithm:
+
+    \begin{enumerate}
+      \item Input: a permutation of the set {1, 2,...,n}
+      \item Output: the next permutation in lexicographical order.
+    \end{enumerate}
+
+  \item (10 points) Analyze the worst-case running time of your algorithm.
+  \item (10 points) Provide an example that shows when the worst-case time can occur.
+  \item (20 points) Analyze the amortized time cost of your algorithm using the aggregate method.
+  \item (20 points) Analyze the amortized time cost of your algorithm using the accounting method.
+  \item (30 points) Analyze the amortized time cost of your algorithm using the potential method.
+\end{enumerate}
+
+Hint: The amortized time cost should be significantly better than the worst-case time, otherwise you should either
+improve your algorithm or tighten the analysis.
+\end{problem}
+
+%\end{document}
+
+\newpage
+
+%---------------------------------------
+
+\bigskip
+\noindent{\bf Solution for Problem~\ref{prob:1}.}
+  
+%\IncMargin{1em}
+\begin{algorithm}
+\DontPrintSemicolon
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKw{KwTo}{in}\SetKw{KwDownTo}{downto}\SetKw{Break}{break}
+\SetKwFunction{abs}{abs}
+\Input{integer set $A$}
+\Output{$A$ after one lexicographical permutation}
+\BlankLine
+$n \leftarrow A.length$
+
+$x \leftarrow -1$
+\tcp*[h]{This will contain index we need to swap}\label{cmt}
+
+$y \leftarrow -1$
+\tcp*[h]{This will contain index we need to swap with}\label{cmt}
+\BlankLine
+\tcp{find first instance where A[i+1] > A[i]}\label{cmt}
+\For{$i$ \KwTo $n-1$ \KwDownTo $0$}{
+  \tcp{A[n-1] has no successor}\label{cmt}
+  \If{$i+1 \leq n-1$}{
+    \If{$A[i] < A[i+1]$}{
+      $x \leftarrow i$ \;
+      \Break
+    }
+  }
+}
+\BlankLine
+\tcp{need to find index, y, of least greater value where y > x}\label{cmt}
+$minDiff \leftarrow -1$ \;
+$y \leftarrow n-1$ \;
+\For{$i$ \KwTo $n-1$ \KwDownTo $max(x,0)$}{
+  \If{$A[i] > A[max(x,0)]$}{
+    \If{$minDiff = -1$ or $minDiff > A[i] - A[max(x,0)]$}{
+      $minDiff \leftarrow A[i] - A[max(x,0)]$ \;
+      $y \leftarrow i$ 
+  }
+  }
+}
+\tcp{swap values at specified indices if x was found}\label{cmt}
+\If{$x \neq -1$}{$swap(A,x,y)$}
+\BlankLine
+\tcp{everything past x needs to be lexicographically ordered}\label{cmt}
+$i \leftarrow x + 1$ \;
+$j \leftarrow n - 1$ \;
+\While{$i \neq j$ and $i < j$}{
+  \tcp{swap values at specified indices}\label{cmt}
+  $swap(A,i,j)$
+}
+
+\Return{A}
+
+\caption{nextPermutation(A)}\label{algo_disjdecomp}
+\end{algorithm}%\DecMargin{1em}
+
+
+\begin{enumerate}
+\item above pseudocode
+\item The algorithm starts out by reverse scanning for the largest $ith$ position that meets the following condition $A[i] < A[i+1]$. This $ith$ position is referred to as the $pivot$. Finding the $pivot$ in the worst case requires a full scan that results in $pivot \leftarrow 0$, which is $\Theta(n)$. Once the $pivot$ is found, the $kth$ value, referred to as the $swap$, will be reverse scanned for that meets the following condition: $k > i$ and $A[k] > A[i]$ such that of the possible values, $A[k] - A[i]$ is the smallest possible difference. Given these conditions, there exists a worst case where there are no values past the $ith$ position that satisfy these conditions. In this case, this step will take $\Theta(n)$ time. After this the $pivot$ and $swap$ are swapped in the set. This, however, can only happen if a $pivot$ was found. Otherwise it is skipped. The last step is to make sure the set in in lexicographical order for the permutation. Since the relationship between the $pivot$ and the $swap$ is that $A[i] < A[k]$ provided $i < k$, it can be stated that the sub array $A[i+1..n-1]$ is in descending order. Furthermore, the following can be stated: $A[i+1..k] > A[i]$ \&\& $A[k+1..n-1] < A[i]$. Given this, after the swap occurs, the sub array $A[i+1..n-1]$ will remain in descending order. Thus, forwards iteration and backwards iteration can be done simultaneously swapping values each step until both iterators meet in the middle resulting in a lexicographically ordered set. This will at most, swap $\frac{n}{2}$ values, which means the worst case will take $\Theta(\frac{n}{2})$. So for the entire function, the time cost is $T(2n + \frac{n}{2})$, or simply, $T(3n)$ at most. 
+\item For the worst case scenario, consider the following set:
+
+$$
+\{ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 \}
+$$
+
+In this set, a $pivot$ won't be found, which defaults to $pivot \leftarrow 0$. Scanning for a $swap$ will iterate through the entire list and not find a suitable value defaulting to $swap \leftarrow n-1$. Since a pivot could not be found, no swapping occurs between $pivot$ and $swap$. The last step then reorders the entire set, which requires the full $\frac{n}{2}$ operations. Afterwards, the set results in the following:
+
+$$
+\{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 \}
+$$
+
+\item 
+
+\begin{proof}
+Need to prove that the amortized cost of this algorithm is $O(1)$ using the aggregate method.
+
+Consider the following permutations from the set $\{ 3, 4 \}$, where $n = 2$:
+
+$$
+[3], 4
+$$
+$$
+4, 3
+$$
+
+Now consider the following permutations from the set $\{ 2, 3, 4 \}$, where $n = 3$:
+
+$$
+2, [3], 4
+$$
+$$
+[2], 4, 3
+$$
+$$
+3, [2], 4
+$$
+$$
+[3], 4, 2
+$$
+$$
+4, [2], 3
+$$
+$$
+4, 3, 2
+$$
+
+The bracketed values are the pivots used to get the next permutation. Let $k$ represent the number of permutations, $k = n!$. In the first set, $k$ is $2!$ an in the second set, $k$ is $3!$. 
+
+The set $n = 2$ had two permutations, one of which had a $pivot$ and a sub array of length 1. With the second set, there were 6 permutations, 3 of which had a $pivot$ where the sub array was of length 1. There were 2 permutations that had a $pivot$ with a sub array of length 2. When $i = 1$ in both of the above sets, the frequency is $\frac{1}{2}$. When $i = 2$ in the above set, the frequency is $\frac{2}{6}$. If $n = 4$, it would be observed that the frequency of $i = 3$ is $\frac{3}{24}$. So, it can be stated that the frequency of a sub array of length $i$ is $\frac{i}{(i+1)!}$.
+
+It should be noted that the cost of a finding the $jth$ permutation is $c_j = 3i_j$. With this, the cost of finding $m$ permutations is as follows:
+
+$$
+\sum_{i=1}^{k} c_i = \sum_{i=1}^{m} 3ik \cdot \frac{i}{(i+1)!}
+$$
+$$
+ = 3k \sum_{i=1}^{m} \frac{i^2}{(i+1)!}
+$$
+$$
+ = 3k \cdot (e-1)
+$$
+$$
+ = 3k \cdot 2 = 6k
+$$
+
+The cost of doing $k$ permutations is $6k$. Therefore, the cost for a single permutation is 6 thus making the time complexity $O(1)$.
+
+
+\end{proof}
+
+\item
+
+\begin{proof}
+Need to prove that the amortized cost of this algorithm is $O(1)$ using the accounting method.
+
+To start, let's define the operations that need to be payed for. Every function call requires finding the $pivot$ and $swap$, swapping both values, and reversing the sequence after the $pivot$. To find the $pivot$, the cost is $x$, where $x$ is the number of iterations needed to find the $pivot$. To find the $swap$, the cost is $x-1$. To do the swap is contant time of 1. Reversing the sequence after the $pivot$ costs $\lfloor\frac{x}{2}\rfloor$. So for each step, the cost is $x +$ $(x-1) +$ $\lfloor\frac{x}{2}\rfloor + 1$. Take the example of a sequence of length 4, represented by $n$, and the number of permutations is $k = n!$. For $k$ permutations, the actual cost was 143. To get the amount that needs to be invested each permutation, the following equation needs to hold true:
+
+$$
+\sum_{i=1}^{k}\hat{c_i} \geq \sum_{i=1}^{k}c_i
+$$
+
+Given this equation, the only $\hat{c}$ that can satisfy this is 6 because $6k = 144$. With this, each permutation gets an investment of $\$6$ every time a $pivot$ is found. \$x is paid to find the pivot and $\$(x-1)$ is paid to find the $swap$ and $\$1$ is paid to do the swap. $\$\lfloor\frac{x}{2}\rfloor$ is paid to reverse the sequence after the $pivot$. There will be instances where an investment will not cover the cost of a function call. In this instance, borrowing credit will need to happen. The amortized cost, then, is $\Theta(6k) / k = \Theta(6) = \Theta(1)$.
+
+\end{proof}
+
+\newpage
+
+\item
+
+\begin{proof}
+Need to prove that the amortized cost of this algorithm is $O(1)$ using the potential method.
+
+A $\phi$ function needs to be defined such that the following equation for a single step holds true:
+
+$$
+\hat{c_i} = c_i + \phi_i - \phi_{i-1}
+$$
+
+For the $ith$ operation were the permutation results in generated pairs of descending digits, the following $\phi$ function is used
+
+$$
+\phi_i = 2x + y
+$$
+
+where $x$ is the number of pairs in descending order created and $y$ is the number of pre-existing descending pairs.
+
+For the $ith$ operation where the permutation includes a reversal, the following $\phi$ function is used:
+
+$$
+\phi_i = x
+$$
+
+So, for descending pair creation:
+
+$$
+\hat{c_i} = c_i + \phi_i - \phi_{i-1}
+$$
+$$
+\hat{c_i} = c_i + 2x_i + y_i - (2x_{i-1} + y_{i-1})
+$$
+$$
+\hat{c_i} = c_i + 2x_i + y_i - (2x_i + y_i - 2)
+$$
+$$
+\hat{c_3} = c_3 + 2(1) + 1 - (2(1) - 1)
+$$
+$$
+\hat{c_i} = 4 + 2(1) + 1 - (2(1) - 1)
+$$
+$$
+\hat{c_i} = 6
+$$
+
+This shows the amortized cost being $O(1)$.
+
+\end{proof}
+
+\end{enumerate}
+
+%---------------------------------------
+
+
+\end{document}
+
+
+
+
