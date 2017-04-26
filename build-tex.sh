@@ -60,6 +60,8 @@ build_tex()
   else
     echo "Build succeeded"
   fi
+
+  echo $(rm "$__tex_out/../$__nameOfFile.aux")
 }
 
 parse_args()
@@ -97,7 +99,7 @@ __tex_out=$(dirname $__file)
 __tex_out="$__tex_out/out"
 
 
-__tex_compiler="latexmk"
+__tex_compiler="latexmk -f "
 __tex_compiler_args="-pdf"
 __tex_compiler_args="$__tex_compiler_args -file-line-error"
 __tex_compiler_args="$__tex_compiler_args -output-directory=$__tex_out"

@@ -1,0 +1,335 @@
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{graphics,epsfig,color}
+\usepackage{wrapfig}
+
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{amsmath,amsthm,amssymb}
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{qtree}
+\usepackage{subfigure}
+\usepackage{url}
+
+
+
+%for code from latexdraw
+%\usepackage[usenames,dvipsnames]{pstricks}
+%\usepackage{epsfig}
+%\usepackage{pst-grad} % For gradients
+%\usepackage{pst-plot} % For axes
+
+
+\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{proposition}{Proposition}[theorem]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{claim}{Claim}[section]
+\newtheorem{problem}{Problem}
+%\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{observation}{Observation}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{openproblem}{Open Problem}[section]
+\newtheorem{fact}{Fact}[section]
+%\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+
+\newcommand{\qedsymb}{\hfill{\rule{2mm}{2mm}}}
+\newenvironment{proofsketch}{\begin{trivlist}
+\item[\hspace{\labelsep}{\noindent Proof Sketch: }]
+}{\qedsymb\end{trivlist}}
+
+
+
+%the following few lines until usepackage{algorithm2e} is to avoid the
+%conflicts of algorithm2e with other packages.
+\makeatletter
+\newif\if@restonecol
+\makeatother
+\let\algorithm\relax
+\let\endalgorithm\relax
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[ruled,vlined]{algorithm2e}
+
+
+%\newenvironment{proof}{\begin{trivlist}
+%\item[\hspace{\labelsep}{\bf\noindent Proof: }]}{\qedsymb\end{trivlist}}
+%\newcommand{\qed}{\hfill\rule{2mm}{2mm}}
+
+\newcommand{\remove}[1]{}
+
+
+
+%--------------------------------
+
+
+\begin{document}
+
+\begin{center}
+  {\LARGE CSCD501 Homework5}
+
+\bigskip 
+
+{\Large Will Czifro}
+
+\end{center}
+
+\bigskip 
+
+\begin{problem}[25 points]
+\label{prob:1}
+Trace the DFT of the vector (1, 2, 3, 4). That is, show the DFT’s of the all the recursive calls
+in computing the DFT of the given vector that uses $\omega_4^i$ as the points, where i = 0, 1, 2, 3.
+\end{problem}
+
+
+
+%---------------------------------------
+
+\begin{problem}[25 points]
+\label{prob:2}
+We define the distance of two points $p_1 = (x_1, y_1)$ and $p_2 = (x_2, y_2)$ as
+
+$$
+\max{\{|x_1 - x_2|,|y_1 - y_2|\}}
+$$
+
+Given a set of n points in the 2-d space with their x and y coordinates. Design an efficient algorithm for finding
+the closest pair of points and their distance. Explain your algorithmic idea and its time complexity using the big-oh
+notation. (Hint: modify the algorithm for finding the closest pair of points that we discussed in the lecture.)
+\end{problem}
+
+
+
+%---------------------------------------
+
+\begin{problem}[25 points]
+\label{prob:3}
+Suppose $X \leq_P Y$. Determine the BEST choice for the following questions.
+\begin{itemize}
+\item If $X \in P$, then: 1) $Y \in P$ 2) $Y \in NP\textendash hard$ 3) Both 4) Neither
+\item If $X \in NP\textendash hard$, then: 1) $Y \in P$ 2) $Y \in NP\textendash hard$ 3) Both 4) Neither
+\item If $Y \in P$, then: 1) $X \in P$ 2) $X \in NP\textendash hard$ 3) Both 4) Neither
+\item If $Y \in NP\textendash hard$, then: 1) $X \in P$ 2) $X \in NP\textendash hard$ 3) Both 4) Neither
+\item If $X \in P$ and $Y \in NP\textendash hard$, then: 1) $P = NP$ 2) $P \neq NP$ 3) Both 4) Neither
+\item If $X \in NP\textendash hard$ and $Y \in P$, then: 1) $P = NP$ 2) $P \neq NP$ 3) Both 4) Neither
+\end{itemize}
+\end{problem}
+
+
+
+
+\begin{problem}[25 points]
+\label{prob:4}
+Show the polynomial-time reduction between the following two problems $X$ and $Y$ . That is,
+explain how to solve $X$ by using a blackbox that solves $Y$ , and the vice versa.
+\begin{itemize}
+\item Problem X \\
+Given a graph $G = (V,E)$ and its three vertices $a, b, c \in V$ , determine whether $G$ has a simple path from $a$ to $c$ that goes through $b$ ?
+\item Problem Y \\
+Given a graph $G = (V,E)$ and its two vertices $d, e \in V$ , determine whether $G$ has a simple cycle that goes through both $d$ and $e$.
+\end{itemize}
+\end{problem}
+
+
+\newpage
+
+%---------------------------------------
+
+\bigskip
+\noindent{\bf Solution for Problem~\ref{prob:1}.}
+
+Trace through DFT for vector $<1,2,3,4>$:
+\\
+First let's do the recursive steps that get us down to one element
+\begin{equation}
+\begin{split}
+& Let A = <1,2,3,4>\\
+\\
+& A(x) = A^{[0]}(x^2) + x A^{[1]}(x^2)\\
+\\
+& A(\omega_4) = 1\omega_4^0 + 2\omega_4^1 + 3\omega_4^2 + 4\omega_4^3\\
+& \quad A^{[0]}(\omega_2) = 1\omega_2^0 + 3\omega_2^1\\
+& \quad \quad A^{[0][0]}(\omega_1) = 1\omega_1^0\\
+& \quad \quad A^{[0][1]}(\omega_1) = 3\omega_1^0\\
+& \quad A^{[1]}(\omega_2) = 2\omega_2^0 + 4\omega_2^1\\
+& \quad \quad A^{[1][0]}(\omega_1) = 2\omega_1^0\\
+& \quad \quad A^{[1][1]}(\omega_1) = 4\omega_1^0
+\end{split}
+\end{equation}
+
+Now that we have single element vectors, let's work back up the chain
+merging results together starting at $A^{[0]}$
+
+\begin{equation}
+\begin{split}
+& \quad \quad A^{[0]} = <1 + (\omega_2^0\cdot 3), 1 + (\omega_2^1\cdot 3)> = <4,-2>\\
+& \quad \quad A^{[1]} = <2 + (\omega_2^0\cdot 4), 2 + (\omega_2^1\cdot 4)> = <6,-2>\\
+& \quad A = <4 + (\omega_4^0\cdot 6), -2 + (\omega_4^1\cdot -2), 4 + (\omega_4^2\cdot 6), -2 + (\omega_4^3\cdot -2)>\\
+& \quad \;\;\; = <10, -2 - 2i, -2, -2 + 2i>
+\end{split}
+\end{equation}
+
+The original vector has now turned into $<10, -2 - 2i, -2, -2 + 2i>$
+
+%---------------------------------------
+\bigskip
+
+\noindent{\bf Solution for Problem~\ref{prob:2}.}
+
+Consider Algorithms 1 and 2. The time complexity is $O(n\log n)$ for this algorithm.
+
+
+%---------------------------------------
+\bigskip
+
+\noindent{\bf Solution for Problem~\ref{prob:3}.}
+
+\begin{itemize}
+\item If $X \in P$, then Neither\\
+Given what is known about $P$ and $NP$ and the fact we can only say $X \in P$, we cannot prove that $Y \in P$ and/or $Y \in NP\textendash hard$
+\item If $X \in NP\textendash hard$, then $Y \in NP\textendash hard$\\
+The only way we can have $X \leq_P Y$ and $X \in NP\textendash hard$ is if we have $Y \in NP\textendash hard$. Since there is no proof that $P = NP$ (or $P \neq NP$), we cannot say anything more about $Y$
+\item If $Y \in P$, then $X \in P$\\
+We can make this claim because there is no proof that $P = NP$. Any $P$ function can be reduced to another $P$ function.
+\item If $Y \in NP\textendash hard$, then Neither\\
+There is insufficient evidence to say anything about $X$, so it is neither
+\item If $X \in P$ and $Y \in NP\textendash hard$, then Neither\\
+There is insufficient evidence to make the claim $P = NP$ or $P \neq NP$, so it is neither
+\item If $X \in NP\textendash hard$ and $Y \in P$, then $P = NP$\\
+If we have $X \in NP\textendash hard$ and $Y \in P$, we are reducing a $NP\textendash hard$ problem to be no harder than a $P$ problem implying that $P = NP$.
+\end{itemize}
+
+
+%---------------------------------------
+\bigskip
+
+\noindent{\bf Solution for Problem~\ref{prob:4}.}
+
+\begin{itemize}
+\item Problem X:\\
+For the function $X$ we have the parameters $G, a, c, b$. This is to read as follows: in directed graph $G$, is there a simple path from $a$ to $c$ that passes through $b$. Solving this will require blackbox function $Y$ with parameters $G, d, e$, which read as follows: in directed graph $G$, is there a simple cycle that passes through $d$ and $e$. If we are limited to using only $Y$ to solve this, we will need to augment $G$ so that the boolean values returned by $Y$ can confirm or deny that there exists a simple path from $a$ to $c$, denoted as $a\rightarrow c$, that passes through $b$, denoted as $a\rightarrow b\rightarrow c$. A simple way to do this would be to add a new vertex to $G.V$. If we add $a^\prime$ to $G.V$ and add $(a^\prime,a)$ and $(c,a^\prime)$ to $G.E$. We then can check if this added point is in a cycle with $b$ because the only way $a^\prime$ can reach $b$ would be through $a$, and $b$ could only reach $a^\prime$ by passing through $c$. This proves the existence of a path $a\rightarrow b\rightarrow c$. This works for undirected graphs if we view it as bi directional and solve it for one direction. Consider Algorithm 3.
+\item Problem Y:\\
+For the function $Y$ we have the parameters $G, d, e$. This is to read as follows: in directed graph $G$, is there a simple cycle that passes through $d$ and $e$. Solving this will require blackbox function $X$ with parameters $G, a, c, b$, which read as follows: in directed graph $G$, is there a simple path from $a$ to $c$ that passes through $b$. If we are limited to using only $X$ to solve this, we will need to augment $G$ so that the boolean values returned by $X$ can confirm or deny that there exists a simple cycle that passes through $d$ and $e$, denoted as $d \leftrightarrow e$. In order to use $X$ to confirm or deny $d \leftrightarrow e$, we need to transform that cycle into a path problem. To do that, we need to look at $d \leftrightarrow e $ as the composition of simple paths $d \rightarrow e$ and $e \rightarrow d$. If we take the edge going into $d$ in $e \rightarrow d$, $(d^\prime,d)$, and remove it, $e \rightarrow d$ no longer exists and we have also eliminated the cycle because of our composition. However, we would now have a simple path $d \rightarrow d^\prime$ that passes through $e$, or $d \rightarrow e \rightarrow d^\prime$. This is something $X$ can confirm for us. So, after removing $(d^\prime,d)$ from $G.E$, if $X(G,d,d^\prime,e)$ returns true, we have proven that $d \leftrightarrow e$ exists. Do for all edges going into $d$. This works for undirected graphs if we view it as bi directional and solve it for one direction. Consider Algorithm 4.
+\end{itemize}
+
+%---------------------------------------
+\newpage
+
+\begin{algorithm}
+\DontPrintSemicolon
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKw{KwTo}{t}
+\Input{Q is a set of n points in the 2-d space\\
+       Each point has (x,y) coordinates}
+\Output{One closest pair of points in Q and their distance}
+\BlankLine
+\If{$|Q| \leq 3$} {
+  find and return the closest pair and their distance using a naive method
+}
+\;
+\tcp{use linear-time algorithm to find median x-coordinate. Time Cost: $O(n)$}\label{cmt}
+\;
+Vertically cut Q into two (almost) evenly-sized pieces: L and R,
+with the order of y-coordinates preserved in both L and R.
+\;
+$(pt1_L, pt2_L, delta_L) \leftarrow ClosestPair(L)$ \tcp*{Time Cost: $T(n/2)$}
+$(pt1_R, pt2_R, delta_R) \leftarrow ClosestPair(R)$ \tcp*{Time Cost: $T(n/2)$}
+$delta \leftarrow \min(delta_L, delta_R)$\;
+$(pt1_{span}, pt2_{span}, delta_{span}) \leftarrow ClosestPairSpan(Q,delta)$ \tcp*{Time Cost: $O(n)$}
+
+\If{$delta < delta_{span}$}{
+  \If{$delta = delta_L$}{ \Return{$(pt1_L, pt2_L, delta_L)$} }
+  \Return{$(pt1_R, pt2_R, delta_R)$}
+}
+\Return{$(pt1_{span}, pt2_{span}, delta_{span})$}
+\caption{ClosestPair(Q)}\label{algo_closestpair}
+\end{algorithm}
+
+\begin{algorithm}
+\DontPrintSemicolon
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKw{KwTo}{t}
+\Input{Q is a set of n points in the 2-d space\\
+       Each point has (x,y) coordinates\\
+       delta is for getting points within delta of the median}
+\Output{One closest pair of points in Q and their distance}
+\BlankLine
+Collect all the points from Q that are within the 2*delta strip with the order of y-coordnates preserved among the collected points \tcp*{Time: $O(n)$}
+\;
+Let $<p_1\ldots p_m>$ be the collected points. \tcp*{$m \leq n$}
+\;
+$delta_{span} \leftarrow infinity$\;
+$pt1_{span} \leftarrow null$\;
+$pt2_{span} \leftarrow null$\;
+\;
+\tcp{Time: $O(m) = O(n)$}
+\For{$i = 1 \ldots m-1$}
+{
+  \For{$j = i+1 \ldots \min(i+7,m)$}{
+    \If{$delta_{span} > \max(|p_i.X-p_j.X|,|p_i.Y-p_j.Y|)$}{
+      $delta_{span} \leftarrow \max(|p_i.X-p_j.X|,|p_i.Y-p_j.Y|)$\;
+      $pt1_{span} \leftarrow p_i$\;
+      $pt2_{span} \leftarrow p_j$\;
+    }
+  }
+}
+\Return{$(pt1_{span}, pt2_{span}, delta_{span})$}
+\caption{ClosestPairSpan(Q,delta)}\label{algo_closestpairspan}
+\end{algorithm}
+
+\begin{algorithm}
+\DontPrintSemicolon
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKw{KwTo}{t}
+\Input{G is a directed graph\\
+       a is the beginning of a simple path\\
+       c is the end of a simple path\\
+       b is the point that lies on the simple path}
+\Output{A boolean stating whether or not there is a 
+        simple path from a to c with point b}
+\BlankLine
+Add point $a^\prime$ to $G.V$\;
+Add edges $(a^\prime,a)$ and $(c,a^\prime)$ to $G.E$\;
+$isNowCycle \leftarrow Y(G,a^\prime,b)$\;
+Remove edges $(a^\prime,a)$ and $(c,a^\prime)$ to $G.E$ \tcp{maintain graph integrity}
+Remove point $a^\prime$ to $G.V$ \tcp{maintain graph integrity}
+\Return{isNowCycle}
+\caption{X(G,a,c,b)}\label{algo_X}
+\end{algorithm}
+
+\begin{algorithm}
+\DontPrintSemicolon
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+\SetKw{KwTo}{t}
+\Input{G is a directed graph\\
+       d is a point in a simple cycle\\
+       e is a point in a simple cycle}
+\Output{A boolean stating whether or not there is a 
+        simple cycle with d and e}
+\BlankLine
+\tcp{See if we can turn the cycle containing d and e}
+\tcp{into a simple starting at d to some node just before d}
+\tcp{that passes through e using function X}
+Let Z be all incoming edges into $d$\;
+\For{$(d^\prime,d) \in Z$}{
+  Remove $(d^\prime,d)$ from $G.E$
+  \If{$X(G,d,d^\prime,e) = true$}{
+    \tcp{We found the edge that completes the cycle}
+    Add $(d^\prime,d)$ to $G.E$ \tcp{maintain graph integrity}
+    \Return{true}
+  }
+  Add $(d^\prime,d)$ to $G.E$ \tcp{maintain graph integrity}
+}
+\tcp{There is no cycle with d and e}
+\Return{false}
+\caption{Y(G,d,e)}\label{algo_Y}
+\end{algorithm}
+
+%---------------------------------------
+
+\end{document}
+
+
+
+
